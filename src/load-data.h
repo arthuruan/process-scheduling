@@ -2,8 +2,8 @@
 #define LOAD_DATA_H
 
 #include <iostream>
-#include <sstream>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 

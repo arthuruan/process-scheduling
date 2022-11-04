@@ -1,16 +1,9 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <stdlib.h>
-#include <sstream>
 #include "load-data.h"
-#include <vector>
 
 using namespace std;
 
 LoadData::LoadData(string pathParam) {
     ifstream myfile(pathParam);
-
     int index;
 
     if (myfile.is_open()) {
