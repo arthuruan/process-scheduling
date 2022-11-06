@@ -1,5 +1,4 @@
 #include "fcfs.h"
-#include <algorithm>
 
 bool compareByArriveTime(const ProcessType &a, const ProcessType &b) {
     return a.arrivalTime < b.arrivalTime;
@@ -23,6 +22,7 @@ Fcfs::Fcfs(vector<ProcessType> processesParam) {
 
         processOnCpu.arrivalTime = currentTime;
         processOnCpu.departureTime = currentTime + process.duration;
+        processOnCpu.readyQueueTime = currentTime;
         processOnCpu.duration = process.duration;
         
         timeline.push_back(processOnCpu);
@@ -36,10 +36,10 @@ vector<ProcessOnCpuType> Fcfs::getTimeline() {
 }
 
 void Fcfs::printTimeline() {
+    cout << timeline[0].arrivalTime;
     for (int i = 0; i < timeline.size(); i++) {
         ProcessOnCpuType process = timeline[i];
-        cout << process.name << ": " << endl
-            << "\t arrival: " << process.arrivalTime << endl
-            << "\t departure: " << process.departureTime << endl << endl;
+        cout << " [" << process.name << "] " << process.departureTime;
     }
+    cout << endl;
 }

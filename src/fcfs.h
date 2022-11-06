@@ -3,16 +3,10 @@
 
 #include <iostream>
 #include <vector>
-#include "load-data.h"
+#include <algorithm>
+#include "types.h"
 
 using namespace std;
-
-struct ProcessOnCpuType {
-    int arrivalTime;
-    int departureTime;
-    string name;
-    int duration;
-};
 
 class Fcfs {
     private:

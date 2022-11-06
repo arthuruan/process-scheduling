@@ -4,13 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include "types.h"
 
 using namespace std;
-
-struct ProcessType {
-    string name;
-    int arrivalTime, duration;
-};
 
 class LoadData {
     private:

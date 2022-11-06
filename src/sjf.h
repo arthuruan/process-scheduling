@@ -3,14 +3,21 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include "types.h"
 
 using namespace std;
 
 class Sjf {
-    // TODO: implement this class
+    private:
+        vector<ProcessOnCpuType> timeline;
 
     public:
         Sjf();
+        Sjf(vector<ProcessType> process);
+
+        vector<ProcessOnCpuType> getTimeline();
+        void printTimeline();
 };
 
 #endif // SJF_H
