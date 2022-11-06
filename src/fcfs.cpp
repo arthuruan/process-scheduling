@@ -1,16 +1,16 @@
 #include "fcfs.h"
 
-bool compareByArriveTime(const ProcessType &a, const ProcessType &b) {
+bool compareFcfs(const ProcessType &a, const ProcessType &b) {
     return a.arrivalTime < b.arrivalTime;
 }
 
-vector<ProcessType> sortByArriveTime(vector<ProcessType> &processes) {
-    sort(processes.begin(), processes.end(), compareByArriveTime);
+vector<ProcessType> sortFcfsByArriveTime(vector<ProcessType> &processes) {
+    sort(processes.begin(), processes.end(), compareFcfs);
     return processes;
 }
 
 Fcfs::Fcfs(vector<ProcessType> processesParam) {
-    vector<ProcessType> processes = sortByArriveTime(processesParam);
+    vector<ProcessType> processes = sortFcfsByArriveTime(processesParam);
 
     int currentTime = 0;
     
@@ -30,16 +30,15 @@ Fcfs::Fcfs(vector<ProcessType> processesParam) {
     }
 }
 
-
 vector<ProcessOnCpuType> Fcfs::getTimeline() {
     return timeline;
 }
 
 void Fcfs::printTimeline() {
-    cout << timeline[0].arrivalTime;
+    cout << "FCFS: " << timeline[0].arrivalTime;
     for (int i = 0; i < timeline.size(); i++) {
         ProcessOnCpuType process = timeline[i];
         cout << " [" << process.name << "] " << process.departureTime;
     }
-    cout << endl;
+    cout << endl << endl;
 }

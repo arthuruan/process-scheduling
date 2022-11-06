@@ -44,7 +44,7 @@ Sjf::Sjf(vector<ProcessType> processesParam) {
             processOnCpu.arrivalTime = currentTime;
             processOnCpu.departureTime = smallerProcess.arrivalTime < firstProcess.duration ? currentTime + smallerProcess.arrivalTime : currentTime + firstProcess.duration;
             processOnCpu.readyQueueTime = -1; // TODO
-            processOnCpu.duration = processOnCpu.departureTime - processOnCpu.arrivalTime ;
+            processOnCpu.duration = processOnCpu.departureTime - processOnCpu.arrivalTime;
 
             ProcessType leftoverProcess;
             leftoverProcess.name = firstProcess.name;
@@ -71,10 +71,10 @@ vector<ProcessOnCpuType> Sjf::getTimeline() {
 }
 
 void Sjf::printTimeline() {
-    cout << timeline[0].arrivalTime;
+    cout << "SJF: " << timeline[0].arrivalTime;
     for (int i = 0; i < timeline.size(); i++) {
         ProcessOnCpuType process = timeline[i];
         cout << " [" << process.name << "] " << process.departureTime;
     }
-    cout << endl;
+    cout << endl << endl;
 }

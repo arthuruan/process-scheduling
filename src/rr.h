@@ -3,14 +3,21 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include "types.h"
 
 using namespace std;
 
 class Rr {
-    // TODO: implement this class
+    private:
+        vector<ProcessOnCpuType> timeline;
 
     public:
         Rr();
+        Rr(vector<ProcessType> process, int quantum);
+
+        vector<ProcessOnCpuType> getTimeline();
+        void printTimeline();
 };
 
 #endif // RR_H
