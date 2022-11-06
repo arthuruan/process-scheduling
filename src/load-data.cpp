@@ -12,7 +12,7 @@ LoadData::LoadData(string pathParam) {
 
             myfile >> p.arrivalTime;
             myfile >> p.duration;
-            p.name = "P" + to_string(index);
+            p.id = "P" + to_string(index);
 
             processes.push_back(p);
 
@@ -28,6 +28,6 @@ vector<ProcessType> LoadData::getProcesses() {
 void LoadData::printProcesses() {
     for (int i = 0; i < processes.size(); i++) {
         ProcessType process = processes[i];
-        cout << process.name << ": " << process.arrivalTime << " " << process.duration << endl;
+        cout << process.id << ": " << process.arrivalTime << " " << process.duration << endl;
     }
 }

@@ -9,14 +9,19 @@
 using namespace std;
 
 class Metrics {
+    private:
+        string algorithm;
+        vector<MetricType> avgWaitingTime;
+        vector<MetricType> avgTurnaroundTime;
+        vector<MetricType> avgResponseTime;
+
     public:
         Metrics();
-        Metrics(vector<ProcessOnCpuType> timeline);
+        Metrics(vector<ProcessOnCpuType> timeline, string algorithm);
 
-        int getAverageWaitingTime();
-        int getAverageTurnaroundTime();
-        int getAverageResponseTime();
-
+        vector<MetricType> getAvgWaitingTime();
+        vector<MetricType> getAvgTurnaroundTime();
+        vector<MetricType> getAvgResponseTime();
         void printMetrics();
 };
 

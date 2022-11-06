@@ -6,13 +6,18 @@
 using namespace std;
 
 struct ProcessType {
-    string name;
+    string id;
     int arrivalTime, duration;
 };
 
 struct ProcessOnCpuType {
-    int arrivalTime, departureTime, readyQueueTime, duration;
-    string name;
+    int arrivalTime, departureTime, duration;
+    string processId;
+};
+
+struct MetricType {
+    int value;
+    string processId;
 };
 
 #endif // TYPES_H

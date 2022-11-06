@@ -19,10 +19,10 @@ ProcessType getSmallerProcess(vector<ProcessType> &processes) {
     return processes[smaller];
 }
 
-int getIndexThroughName(vector<ProcessType> &processes, string name) {
+int getIndexThroughName(vector<ProcessType> &processes, string &processId) {
     int index = 0;
     for(int i = 0; i < processes.size(); i++) {
-        if(processes[i].name == name) {
+        if(processes[i].id == processId) {
             index = i;
             break;
         }
@@ -40,28 +40,26 @@ Sjf::Sjf(vector<ProcessType> processesParam) {
 
         ProcessOnCpuType processOnCpu;
         if (firstProcess.arrivalTime < smallerProcess.arrivalTime && currentTime < smallerProcess.arrivalTime) {
-            processOnCpu.name = firstProcess.name;
+            processOnCpu.processId = firstProcess.id;
             processOnCpu.arrivalTime = currentTime;
             processOnCpu.departureTime = smallerProcess.arrivalTime < firstProcess.duration ? currentTime + smallerProcess.arrivalTime : currentTime + firstProcess.duration;
-            processOnCpu.readyQueueTime = -1; // TODO
             processOnCpu.duration = processOnCpu.departureTime - processOnCpu.arrivalTime;
 
             ProcessType leftoverProcess;
-            leftoverProcess.name = firstProcess.name;
+            leftoverProcess.id = firstProcess.id;
             leftoverProcess.arrivalTime = firstProcess.arrivalTime;
             leftoverProcess.duration = firstProcess.duration - smallerProcess.arrivalTime;
             processes.push_back(leftoverProcess);
         } else {
-            processOnCpu.name = smallerProcess.name;
+            processOnCpu.processId = smallerProcess.id;
             processOnCpu.arrivalTime = currentTime;
             processOnCpu.departureTime = currentTime + smallerProcess.duration;
-            processOnCpu.readyQueueTime = -1; // TODO
             processOnCpu.duration = smallerProcess.duration;
         }
         currentTime += processOnCpu.duration;
         timeline.push_back(processOnCpu);
 
-        int eraseIndex = getIndexThroughName(processes, processOnCpu.name);
+        int eraseIndex = getIndexThroughName(processes, processOnCpu.processId);
         processes.erase(processes.begin() + eraseIndex);
     }
 }
@@ -73,8 +71,8 @@ vector<ProcessOnCpuType> Sjf::getTimeline() {
 void Sjf::printTimeline() {
     cout << "SJF: " << timeline[0].arrivalTime;
     for (int i = 0; i < timeline.size(); i++) {
-        ProcessOnCpuType process = timeline[i];
-        cout << " [" << process.name << "] " << process.departureTime;
+        ProcessOnCpuType processOnCpu = timeline[i];
+        cout << " [" << processOnCpu.processId << "] " << processOnCpu.departureTime;
     }
     cout << endl << endl;
 }
