@@ -11,7 +11,7 @@ struct ProcessType {
 };
 
 struct ProcessOnCpuType {
-    int arrivalTime, departureTime, duration;
+    int arrivalTime, entryTime, departureTime, duration;
     string processId;
 };
 

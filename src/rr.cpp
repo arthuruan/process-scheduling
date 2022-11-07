@@ -18,9 +18,11 @@ Rr::Rr(vector<ProcessType> processesParam, int quantum) {
         ProcessType process = processes[0];
         ProcessOnCpuType processOnCpu;
 
+        processOnCpu.processId = process.id;
+        processOnCpu.arrivalTime = process.arrivalTime;
+        processOnCpu.entryTime = currentTime;
+
         if (quantum < process.duration) {
-            processOnCpu.processId = process.id;
-            processOnCpu.arrivalTime = currentTime;
             processOnCpu.departureTime = currentTime + quantum;
             processOnCpu.duration = quantum;
 
@@ -30,8 +32,6 @@ Rr::Rr(vector<ProcessType> processesParam, int quantum) {
             leftoverProcess.duration = process.duration - quantum;
             processes.push_back(leftoverProcess);
         } else {
-            processOnCpu.processId = process.id;
-            processOnCpu.arrivalTime = currentTime;
             processOnCpu.departureTime = currentTime + process.duration;
             processOnCpu.duration = process.duration;
         }
@@ -47,7 +47,7 @@ vector<ProcessOnCpuType> Rr::getTimeline() {
 }
 
 void Rr::printTimeline() {
-    cout << "RR: " << timeline[0].arrivalTime;
+    cout << "RR: " << timeline[0].entryTime;
     for (int i = 0; i < timeline.size(); i++) {
         ProcessOnCpuType processOnCpu = timeline[i];
         cout << " [" << processOnCpu.processId << "] " << processOnCpu.departureTime;

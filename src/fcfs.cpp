@@ -13,17 +13,18 @@ Fcfs::Fcfs(vector<ProcessType> processesParam) {
     vector<ProcessType> processes = sortFcfsByArriveTime(processesParam);
 
     int currentTime = 0;
-    
+
     for (int i = 0; i < processes.size(); i++) {
         ProcessType process = processes[i];
         ProcessOnCpuType processOnCpu;
 
         processOnCpu.processId = process.id;
 
-        processOnCpu.arrivalTime = currentTime;
+        processOnCpu.arrivalTime = process.arrivalTime;
+        processOnCpu.entryTime = currentTime;
         processOnCpu.departureTime = currentTime + process.duration;
         processOnCpu.duration = process.duration;
-        
+
         timeline.push_back(processOnCpu);
         currentTime += process.duration;
     }
@@ -34,7 +35,7 @@ vector<ProcessOnCpuType> Fcfs::getTimeline() {
 }
 
 void Fcfs::printTimeline() {
-    cout << "FCFS: " << timeline[0].arrivalTime;
+    cout << "FCFS: " << timeline[0].entryTime;
     for (int i = 0; i < timeline.size(); i++) {
         ProcessOnCpuType processOnCpu = timeline[i];
         cout << " [" << processOnCpu.processId << "] " << processOnCpu.departureTime;

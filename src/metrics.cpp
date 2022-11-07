@@ -11,86 +11,138 @@ int getMetricIndexByProcessId(vector<MetricType> &metrics, string &processId) {
     return index;
 }
 
-vector<MetricType> calculateAvgResponseTime(vector<ProcessOnCpuType> &timeline) {
-    vector<MetricType> avgResponseTime;
+int getGroupedTimelineIndexByProcessId(vector< vector<ProcessOnCpuType> > &groupedTimeline, string &processId) {
+    int index = -1;
+
+    for (int i = 0; i < groupedTimeline.size(); i++) {
+        vector<ProcessOnCpuType> group = groupedTimeline[i];
+        for (int j = 0; j < group.size(); j++) {
+            if (group[j].processId == processId) {
+                index = i;
+                break;
+            }
+        }
+    }
+
+    return index;
+}
+
+float calculateMetricsAvg(vector<MetricType> &metrics) {
+    int sum = 0;
+    for (int i = 0; i < metrics.size(); i++) {
+        sum += metrics[i].value;
+    }
+    float result = (float)sum / (float)metrics.size();
+    return result;
+}
+
+vector<MetricType> calculateResponseTimeGroup(vector<ProcessOnCpuType> &timeline) {
+    vector<MetricType> responseTimeGroup;
 
     for (int i = 0; i < timeline.size(); i++) {
         ProcessOnCpuType processOnCpu = timeline[i];
         MetricType metric;
         
-        int index = getMetricIndexByProcessId(avgResponseTime, processOnCpu.processId);
+        int index = getMetricIndexByProcessId(responseTimeGroup, processOnCpu.processId);
 
-        MetricType metricByProcessId = index >= 0 ? avgResponseTime[index] : metric;
+        MetricType metricByProcessId = index >= 0 ? responseTimeGroup[index] : metric;
         if (metricByProcessId.processId.empty()) {
             metric.processId = processOnCpu.processId;
-            metric.value = processOnCpu.arrivalTime;
-            avgResponseTime.push_back(metric);
+            metric.value = processOnCpu.entryTime;
+            responseTimeGroup.push_back(metric);
         }
     }
 
-    return avgResponseTime;
+    return responseTimeGroup;
 }
 
-vector<MetricType> calculateAvgTurnaroundTime(vector<ProcessOnCpuType> &timeline) {
-    vector<MetricType> avgTurnaroundTime;
+vector<MetricType> calculateTurnaroundTimeGroup(vector<ProcessOnCpuType> &timeline) {
+    vector<MetricType> turnaroundTimeGroup;
 
     for (int i = 0; i < timeline.size(); i++) {
         ProcessOnCpuType processOnCpu = timeline[i];
         MetricType metric;
 
-        int index = getMetricIndexByProcessId(avgTurnaroundTime, processOnCpu.processId);
+        int index = getMetricIndexByProcessId(turnaroundTimeGroup, processOnCpu.processId);
 
-        MetricType metricByProcessId = index >= 0 ? avgTurnaroundTime[index] : metric;
+        MetricType metricByProcessId = index >= 0 ? turnaroundTimeGroup[index] : metric;
         if (metricByProcessId.processId.empty()) {
             metric.processId = processOnCpu.processId;
             metric.value = processOnCpu.departureTime;
-            avgTurnaroundTime.push_back(metric);
+            turnaroundTimeGroup.push_back(metric);
         } else {
-            avgTurnaroundTime[index].value = metricByProcessId.value > processOnCpu.departureTime ? metricByProcessId.value : processOnCpu.departureTime;
+            turnaroundTimeGroup[index].value = metricByProcessId.value > processOnCpu.departureTime ? metricByProcessId.value : processOnCpu.departureTime;
         }
     }
 
-    return avgTurnaroundTime;
+    return turnaroundTimeGroup;
+}
+
+vector< vector<ProcessOnCpuType> > groupByProcessId(vector<ProcessOnCpuType> &timeline) {
+    vector< vector<ProcessOnCpuType> > groupedTimeline;
+
+    for (int i = 0; i < timeline.size(); i++) {
+        ProcessOnCpuType processOnCpu = timeline[i];
+        vector<ProcessOnCpuType> processOnCpuGroup;
+
+        int index = getGroupedTimelineIndexByProcessId(groupedTimeline, processOnCpu.processId);
+
+        vector<ProcessOnCpuType> processOnCpuGroupByProcessId = index >= 0 ? groupedTimeline[index] : processOnCpuGroup;
+        if (processOnCpuGroupByProcessId.empty()) {
+            processOnCpuGroup.push_back(processOnCpu);
+            groupedTimeline.push_back(processOnCpuGroup);
+        } else {
+            groupedTimeline[index].push_back(processOnCpu);
+        }
+    }
+    return groupedTimeline;
+}
+
+vector<MetricType> calculateWaitingTimeGroup(vector<ProcessOnCpuType> &timeline) {
+    vector<MetricType> waitingTimeGroup;
+    vector< vector<ProcessOnCpuType> > groupedTimeline = groupByProcessId(timeline);
+
+    for (int i = 0; i < groupedTimeline.size(); i++) {
+        vector<ProcessOnCpuType> processOnCpuGroup = groupedTimeline[i];
+        MetricType metric;
+
+        for (int j = 0; j < processOnCpuGroup.size(); j++) {
+            ProcessOnCpuType processOnCpu = processOnCpuGroup[j];
+            if (j == 0) {
+                metric.processId = processOnCpu.processId;
+                metric.value = processOnCpu.entryTime - processOnCpu.arrivalTime;
+            } else {
+                metric.value = processOnCpu.entryTime - processOnCpuGroup[j - 1].departureTime;
+            }
+        }
+        waitingTimeGroup.push_back(metric);
+    }
+
+    return waitingTimeGroup;
 }
 
 Metrics::Metrics(vector<ProcessOnCpuType> timeline, string algorithm) {
     this->algorithm = algorithm;
-    avgResponseTime = calculateAvgResponseTime(timeline);
-    avgTurnaroundTime = calculateAvgTurnaroundTime(timeline);
+    responseTimeGroup = calculateResponseTimeGroup(timeline);
+    turnaroundTimeGroup = calculateTurnaroundTimeGroup(timeline);
+    waitingTimeGroup = calculateWaitingTimeGroup(timeline);
 }
 
-vector<MetricType> Metrics::getAvgWaitingTime() {
-    return avgWaitingTime;
+vector<MetricType> Metrics::getWaitingTimeGroup() {
+    return waitingTimeGroup;
 }
 
-vector<MetricType> Metrics::getAvgTurnaroundTime() {
-    return avgTurnaroundTime;
+vector<MetricType> Metrics::getTurnaroundTimeGroup() {
+    return turnaroundTimeGroup;
 }
 
-vector<MetricType> Metrics::getAvgResponseTime() {
-    return avgResponseTime;
+vector<MetricType> Metrics::getResponseTimeGroup() {
+    return responseTimeGroup;
 }
 
 void Metrics::printMetrics() {
-    cout << "[" << algorithm << "]" << endl;
-    cout << "Average waiting time: " << endl;
-    for (int i = 0; i < avgWaitingTime.size(); i++) {
-        MetricType metric = avgWaitingTime[i];
-        cout << "\t" << metric.processId << ": " << metric.value << endl;
-    }
-    cout << endl;
-
-    cout << "Average turnaround time: " << endl;
-    for (int i = 0; i < avgTurnaroundTime.size(); i++) {
-        MetricType metric = avgTurnaroundTime[i];
-        cout << "\t" << metric.processId << ": " << metric.value << endl;
-    }
-    cout << endl;
-
-    cout << "Average response time: " << endl;
-    for (int i = 0; i < avgResponseTime.size(); i++) {
-        MetricType metric = avgResponseTime[i];
-        cout << "\t" << metric.processId << ": " << metric.value << endl;
-    }
-    cout << endl << endl;
+    float avgTurnaroundTime = calculateMetricsAvg(turnaroundTimeGroup);
+    float avgResponseTime = calculateMetricsAvg(responseTimeGroup);
+    float avgWaitingTime = calculateMetricsAvg(waitingTimeGroup);
+    printf("%s %.1f %.1f %.1f\n", algorithm.c_str(), avgTurnaroundTime, avgResponseTime, avgWaitingTime);
 }

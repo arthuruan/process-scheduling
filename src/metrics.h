@@ -2,8 +2,8 @@
 #define METRICS_H
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
-// #include <algorithm>
 #include "types.h"
 
 using namespace std;
@@ -11,17 +11,17 @@ using namespace std;
 class Metrics {
     private:
         string algorithm;
-        vector<MetricType> avgWaitingTime;
-        vector<MetricType> avgTurnaroundTime;
-        vector<MetricType> avgResponseTime;
+        vector<MetricType> waitingTimeGroup;
+        vector<MetricType> turnaroundTimeGroup;
+        vector<MetricType> responseTimeGroup;
 
     public:
         Metrics();
         Metrics(vector<ProcessOnCpuType> timeline, string algorithm);
 
-        vector<MetricType> getAvgWaitingTime();
-        vector<MetricType> getAvgTurnaroundTime();
-        vector<MetricType> getAvgResponseTime();
+        vector<MetricType> getWaitingTimeGroup();
+        vector<MetricType> getTurnaroundTimeGroup();
+        vector<MetricType> getResponseTimeGroup();
         void printMetrics();
 };
 
